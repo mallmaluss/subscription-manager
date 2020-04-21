@@ -617,3 +617,16 @@ def unique_list_items(l, hash_function=lambda x: x):
 
 def generate_correlation_id():
     return str(uuid.uuid4()).replace('-', '')  # FIXME cp should accept -
+
+def get_process_names():
+    for subdir in os.listdir('/proc'):
+        if re.match('[0-9]+', subdir):
+            with open(os.path.join(os.path.sep, 'proc', subdir, 'status')) as status:
+                name = status.readline().split('\t')[-1].strip()
+            yield name
+
+def is_process_running(process_to_find):
+    for process_name in get_process_names():
+        if process_to_find == process_name:
+            return True
+    return False
